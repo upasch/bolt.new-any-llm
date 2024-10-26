@@ -7,9 +7,10 @@ import { Menu } from '~/components/sidebar/Menu.client';
 import { IconButton } from '~/components/ui/IconButton';
 import { Workbench } from '~/components/workbench/Workbench.client';
 import { classNames } from '~/utils/classNames';
-import { MODEL_LIST } from '~/utils/constants';
+import { MODEL_LIST, DEFAULT_PROVIDER } from '~/utils/constants';
 import { Messages } from './Messages.client';
 import { SendButton } from './SendButton.client';
+import { useState } from 'react';
 
 import styles from './BaseChat.module.scss';
 
@@ -20,6 +21,48 @@ const EXAMPLE_PROMPTS = [
   { text: 'Make a space invaders game' },
   { text: 'How do I center a div?' },
 ];
+
+const providerList = [...new Set(MODEL_LIST.map((model) => model.provider))]
+
+const ModelSelector = ({ model, setModel, modelList, providerList }) => {
+  const [provider, setProvider] = useState(DEFAULT_PROVIDER);
+  return (
+    <div className="mb-2">
+      <select
+        value={provider}
+        onChange={(e) => {
+          setProvider(e.target.value);
+          const firstModel = [...modelList].find(m => m.provider == e.target.value);
+          setModel(firstModel ? firstModel.name : '');
+        }}
+        className="w-full p-2 rounded-lg border border-bolt-elements-borderColor bg-bolt-elements-prompt-background text-bolt-elements-textPrimary focus:outline-none"
+      >
+        {providerList.map((provider) => (
+          <option key={provider} value={provider}>
+            {provider}
+          </option>
+        ))}
+        <option key="Ollama" value="Ollama">
+          Ollama
+        </option>
+        <option key="OpenAILike" value="OpenAILike">
+          OpenAILike
+        </option>
+      </select>
+      <select
+        value={model}
+        onChange={(e) => setModel(e.target.value)}
+        className="w-full p-2 rounded-lg border border-bolt-elements-borderColor bg-bolt-elements-prompt-background text-bolt-elements-textPrimary focus:outline-none"
+      >
+        {[...modelList].filter(e => e.provider == provider && e.name).map((modelOption) => (
+          <option key={modelOption.name} value={modelOption.name}>
+            {modelOption.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
 
 const TEXTAREA_MIN_HEIGHT = 76;
 
@@ -76,7 +119,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         data-chat-visible={showChat}
       >
         <ClientOnly>{() => <Menu />}</ClientOnly>
-        <div ref={scrollRef} className="flex overflow-scroll w-full h-full">
+        <div ref={scrollRef} className="flex overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
               <div id="intro" className="mt-[26vh] max-w-chat mx-auto">
@@ -110,20 +153,12 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   'sticky bottom-0': chatStarted,
                 })}
               >
-                {/* Model selection dropdown */}
-                <div className="mb-2">
-                  <select
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    className="w-full p-2 rounded-lg border border-bolt-elements-borderColor bg-bolt-elements-prompt-background text-bolt-elements-textPrimary focus:outline-none"
-                  >
-                    {MODEL_LIST.map((modelOption) => (
-                      <option key={modelOption.name} value={modelOption.name}>
-                        {modelOption.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <ModelSelector
+                  model={model}
+                  setModel={setModel}
+                  modelList={MODEL_LIST}
+                  providerList={providerList}
+                />
                 <div
                   className={classNames(
                     'shadow-sm border border-bolt-elements-borderColor bg-bolt-elements-prompt-background backdrop-filter backdrop-blur-[8px] rounded-lg overflow-hidden',
