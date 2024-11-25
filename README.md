@@ -1,8 +1,12 @@
 [![Bolt.new: AI-Powered Full-Stack Web Development in the Browser](./public/social_preview_index.jpg)](https://bolt.new)
 
-# Bolt.new Fork by Cole Medin
+# Bolt.new Fork by Cole Medin - oTToDev
 
-This fork of Bolt.new allows you to choose the LLM that you use for each prompt! Currently, you can use OpenAI, Anthropic, Ollama, OpenRouter, Gemini, or Groq models - and it is easily extended to use any other model supported by the Vercel AI SDK! See the instructions below for running this locally and extending it to include more models.
+This fork of Bolt.new (oTToDev) allows you to choose the LLM that you use for each prompt! Currently, you can use OpenAI, Anthropic, Ollama, OpenRouter, Gemini, LMStudio, Mistral, xAI, HuggingFace, DeepSeek, or Groq models - and it is easily extended to use any other model supported by the Vercel AI SDK! See the instructions below for running this locally and extending it to include more models.
+
+Join the community for oTToDev!
+
+https://thinktank.ottomator.ai
 
 # Requested Additions to this Fork - Feel Free to Contribute!!
 
@@ -18,23 +22,28 @@ This fork of Bolt.new allows you to choose the LLM that you use for each prompt!
 - ✅ Ability to sync files (one way sync) to local folder (@muzafferkadir)
 - ✅ Containerize the application with Docker for easy installation (@aaronbolton)
 - ✅ Publish projects directly to GitHub (@goncaloalves)
-- ⬜ Prevent Bolt from rewriting files as often (Done but need to review PR still)
+- ✅ Ability to enter API keys in the UI (@ali00209)
+- ✅ xAI Grok Beta Integration (@milutinke)
+- ✅ LM Studio Integration (@karrot0)
+- ✅ HuggingFace Integration (@ahsan3219)
+- ✅ Bolt terminal to see the output of LLM run commands (@thecodacus)
+- ✅ Streaming of code output (@thecodacus)
+- ✅ Ability to revert code to earlier version (@wonderwhy-er)
+- ⬜ **HIGH PRIORITY** - Prevent Bolt from rewriting files as often (file locking and diffs)
 - ⬜ **HIGH PRIORITY** - Better prompting for smaller LLMs (code window sometimes doesn't start)
-- ⬜ **HIGH PRIORITY** Load local projects into the app
+- ⬜ **HIGH PRIORITY** - Load local projects into the app
 - ⬜ **HIGH PRIORITY** - Attach images to prompts
 - ⬜ **HIGH PRIORITY** - Run agents in the backend as opposed to a single model call
-- ⬜ LM Studio Integration
+- ⬜ Mobile friendly
 - ⬜ Together Integration
 - ⬜ Azure Open AI API Integration
-- ⬜ HuggingFace Integration
 - ⬜ Perplexity Integration
 - ⬜ Vertex AI Integration
-- ⬜ Cohere Integration
+- ✅ Cohere Integration (@hasanraiyan)
+- ✅ Dynamic model max token length (@hasanraiyan)
 - ⬜ Deploy directly to Vercel/Netlify/other similar platforms
-- ⬜ Ability to revert code to earlier version
 - ⬜ Prompt caching
 - ⬜ Better prompt enhancing
-- ⬜ Ability to enter API keys in the UI
 - ⬜ Have LLM plan the project in a MD file for better results/transparency
 - ⬜ VSCode Integration with git-like confirmations
 - ⬜ Upload documents for knowledge - UI design templates, a code base to reference coding style, etc.
@@ -61,20 +70,17 @@ Whether you’re an experienced developer, a PM, or a designer, Bolt.new allows 
 
 For developers interested in building their own AI-powered development tools with WebContainers, check out the open-source Bolt codebase in this repo!
 
-## Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- Node.js (v20.15.1)
-- pnpm (v9.4.0)
-
 ## Setup
 
-Many of you are new users to installing software from Github. Below are instructions for Mac users. PC users may be able to follow the instructions below as well. If you have any installation troubles reach out and submit an "issue" using the links above, or feel free to enhance this documentation by forking, editing the instructions, and doing a pull request.
+Many of you are new users to installing software from Github. If you have any installation troubles reach out and submit an "issue" using the links above, or feel free to enhance this documentation by forking, editing the instructions, and doing a pull request.
 
 1. Install Git from https://git-scm.com/downloads
 
-2. Install Node.js from https://nodejs.org/en/download/. Pay attention to the installer notes after completion. On a Mac, it will tell you to check if /usr/local/bin is in your $PATH. To determine if usr/local/bin is included in $PATH open your Terminal and run 
+2. Install Node.js from https://nodejs.org/en/download/ 
+
+Pay attention to the installer notes after completion. 
+
+On all operating systems, the path to Node.js should automatically be added to your system path. But you can check your path if you want to be sure. On Windows, you can search for "edit the system environment variables" in your system, select "Environment Variables..." once you are in the system properties, and then check for a path to Node in your "Path" system variable. On a Mac or Linux machine, it will tell you to check if /usr/local/bin is in your $PATH. To determine if usr/local/bin is included in $PATH open your Terminal and run:
 
 ```
 echo $PATH .
@@ -88,19 +94,7 @@ If you see usr/local/bin in the output then you're good to go.
 git clone https://github.com/coleam00/bolt.new-any-llm.git
 ```
 
-4. Install dependencies using Terminal (or CMD in Windows with admin permissions):
-
-```
-pnpm install
-```
-
-If you get an error saying "command not found: pnpm" or similar, then that means pnpm isn't installed. You can install it via this:
-
-```
-sudo npm install -g pnpm
-```
-
-5. Rename .env.example to .env.local and add your LLM API keys. You will find this file on a Mac at "[your name]/bold.new-any-llm/.env.example"
+3. Rename .env.example to .env.local and add your LLM API keys. You will find this file on a Mac at "[your name]/bold.new-any-llm/.env.example". For Windows and Linux the path will be similar.
 
 ![image](https://github.com/user-attachments/assets/7e6a532c-2268-401f-8310-e8d20c731328)
 
@@ -131,6 +125,97 @@ VITE_LOG_LEVEL=debug
 ```
 
 **Important**: Never commit your `.env.local` file to version control. It's already included in .gitignore.
+
+## Run with Docker
+
+Prerequisites:
+
+Git and Node.js as mentioned above, as well as Docker: https://www.docker.com/
+
+### 1a. Using Helper Scripts
+
+NPM scripts are provided for convenient building:
+
+```bash
+# Development build
+npm run dockerbuild
+
+# Production build
+npm run dockerbuild:prod
+```
+
+### 1b. Direct Docker Build Commands (alternative to using NPM scripts)
+
+You can use Docker's target feature to specify the build environment instead of using NPM scripts if you wish:
+
+```bash
+# Development build
+docker build . --target bolt-ai-development
+
+# Production build
+docker build . --target bolt-ai-production
+```
+
+### 2. Docker Compose with Profiles to Run the Container
+
+Use Docker Compose profiles to manage different environments:
+
+```bash
+# Development environment
+docker-compose --profile development up
+
+# Production environment
+docker-compose --profile production up
+```
+
+When you run the Docker Compose command with the development profile, any changes you
+make on your machine to the code will automatically be reflected in the site running
+on the container (i.e. hot reloading still applies!).
+
+## Run Without Docker
+
+1. Install dependencies using Terminal (or CMD in Windows with admin permissions):
+
+```
+pnpm install
+```
+
+If you get an error saying "command not found: pnpm" or similar, then that means pnpm isn't installed. You can install it via this:
+
+```
+sudo npm install -g pnpm
+```
+
+2. Start the application with the command:
+
+```bash
+pnpm run dev
+```
+
+## Super Important Note on Running Ollama Models
+
+Ollama models by default only have 2048 tokens for their context window. Even for large models that can easily handle way more.
+This is not a large enough window to handle the Bolt.new/oTToDev prompt! You have to create a version of any model you want
+to use where you specify a larger context window. Luckily it's super easy to do that.
+
+All you have to do is:
+
+- Create a file called "Modelfile" (no file extension) anywhere on your computer
+- Put in the two lines:
+
+```
+FROM [Ollama model ID such as qwen2.5-coder:7b]
+PARAMETER num_ctx 32768
+```
+
+- Run the command: 
+
+```
+ollama create -f Modelfile [your new model ID, can be whatever you want (example: qwen2.5-coder-extra-ctx:7b)]
+```
+
+Now you have a new Ollama model that isn't heavily limited in the context length like Ollama models are by default for some reason.
+You'll see this new model in the list of Ollama models along with all the others you pulled!
 
 ## Adding New LLMs:
 
